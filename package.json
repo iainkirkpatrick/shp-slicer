@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "express": "*",
+    "mapbox.js": "^2.2.1",
     "react": "^0.13.3",
     "reactify": "^1.1.1",
     "rx": "^2.5.3"
