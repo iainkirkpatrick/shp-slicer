@@ -1,0 +1,29 @@
+{
+  "name": "shp-slicer",
+  "version": "0.0.1",
+  "author": "iainkirkpatrick",
+  "main": "index.js",
+  "scripts": {
+    "dev": "budo index.js:bundle.js --live --verbose --debug"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "dependencies": {
+    "express": "*",
+    "react": "^0.13.3",
+    "reactify": "^1.1.1",
+    "rx": "^2.5.3"
+  },
+  "engines": {
+    "node": "0.10.x"
+  },
+  "devDependencies": {
+    "babelify": "^6.1.3",
+    "browserify": "^10.2.6",
+    "budo": "^4.1.0",
+    "watchify": "^3.2.3"
+  }
+}
