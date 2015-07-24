@@ -1,4 +1,5 @@
 var React = require('react');
+var Shp = require('shpjs');
 require('mapbox.js'); // <-- auto-attaches to window.L
 
 //mapbox config stuff
@@ -27,9 +28,12 @@ var Map = React.createClass({
     var map = L.mapbox.map('map', 'envintage.i9eofp14')
       .setView(this.props.view.latlon, this.props.view.zoom);
 
-    if (this.props.geojson) {
-      map.featureLayer.setGeoJSON(this.props.geojson);
-    };
+    var data = Shp("shapefiles/ne_110m_admin_0_countries/ne_110m_admin_0_countries").then(function(geojson){
+        map.featureLayer.setGeoJSON(geojson);
+    });
+    // if (this.props.geojson) {
+    //   map.featureLayer.setGeoJSON(this.props.geojson);
+    // };
   },
   render: function() {
     return (
