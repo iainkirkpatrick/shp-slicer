@@ -6,21 +6,31 @@ L.mapbox.accessToken = 'pk.eyJ1IjoiZW52aW50YWdlIiwiYSI6Inh6U0p2bkEifQ.p6VrrwOc_w
 
 
 var Map = React.createClass({
-  componentDidMount: function() {
-    L.mapbox.map('map', 'envintage.i9eofp14');
-  },
-  render: function() {
-    var mapStyle = {
+  style: function() {
+    return {
       position:'absolute',
       top:'0',
       bottom:'0',
       width:'100%'
+    }
+  },
+  getDefaultProps: function() {
+    return {
+      view: {
+        latlon: [-41.28646, 174.77624],
+        zoom: 13
+      }
     };
+  },
+  componentDidMount: function() {
+    L.mapbox.map('map', 'envintage.i9eofp14')
+      .setView(this.props.view.latlon, this.props.view.zoom);
+  },
+  render: function() {
     return (
-      <div style={mapStyle} id="map"/>
+      <div style={this.style()} id="map"/>
     );
   }
-
 });
 
 module.exports = Map;
