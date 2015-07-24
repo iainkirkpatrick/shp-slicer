@@ -13,12 +13,14 @@
   },
   "dependencies": {
     "express": "*",
+    "leaflet-draw": "^0.2.3",
     "mapbox.js": "^2.2.1",
     "react": "^0.13.3",
     "reactify": "^1.1.1",
     "rx": "^2.5.3",
     "shp-write": "^0.2.1",
-    "shpjs": "^3.1.6"
+    "shpjs": "^3.1.6",
+    "turf": "^2.0.2"
   },
   "engines": {
     "node": "0.10.x"

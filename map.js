@@ -1,6 +1,7 @@
 var React = require('react');
 var Shp = require('shpjs');
 require('mapbox.js'); // <-- auto-attaches to window.L
+require('leaflet-draw');
 
 //mapbox config stuff
 L.mapbox.accessToken = 'pk.eyJ1IjoiZW52aW50YWdlIiwiYSI6Inh6U0p2bkEifQ.p6VrrwOc_w0Ij-iTj7Zz8A';
@@ -28,9 +29,25 @@ var Map = React.createClass({
     var map = L.mapbox.map('map', 'envintage.i9eofp14')
       .setView(this.props.view.latlon, this.props.view.zoom);
 
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+    var drawControl = new L.Control.Draw({
+      edit: {
+        featureGroup: drawnItems
+      }
+    });
+    map.addControl(drawControl);
+    map.on('draw:created', function (e) {
+			var type = e.layerType,
+				  layer = e.layer;
+
+			drawnItems.addLayer(layer);
+		});
+
     var data = Shp("shapefiles/ne_110m_admin_0_countries/ne_110m_admin_0_countries").then(function(geojson){
         map.featureLayer.setGeoJSON(geojson);
     });
+
     // if (this.props.geojson) {
     //   map.featureLayer.setGeoJSON(this.props.geojson);
     // };
