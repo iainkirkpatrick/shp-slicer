@@ -19,12 +19,17 @@ var Map = React.createClass({
       view: {
         latlon: [-41.28646, 174.77624],
         zoom: 13
-      }
+      },
+      geojson: null
     };
   },
   componentDidMount: function() {
-    L.mapbox.map('map', 'envintage.i9eofp14')
+    var map = L.mapbox.map('map', 'envintage.i9eofp14')
       .setView(this.props.view.latlon, this.props.view.zoom);
+
+    if (this.props.geojson) {
+      map.featureLayer.setGeoJSON(this.props.geojson);
+    };
   },
   render: function() {
     return (
