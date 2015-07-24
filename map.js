@@ -1,5 +1,6 @@
 var React = require('react');
 var Shp = require('shpjs');
+var Turf = require('turf');
 require('mapbox.js'); // <-- auto-attaches to window.L
 require('leaflet-draw');
 
@@ -29,6 +30,12 @@ var Map = React.createClass({
     var map = L.mapbox.map('map', 'envintage.i9eofp14')
       .setView(this.props.view.latlon, this.props.view.zoom);
 
+    var geojson;
+    Shp("shapefiles/ne_110m_admin_0_countries/ne_110m_admin_0_countries").then(function(data){
+        map.featureLayer.setGeoJSON(data);
+        geojson = data;
+    });
+
     var drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
     var drawControl = new L.Control.Draw({
@@ -40,13 +47,19 @@ var Map = React.createClass({
     map.on('draw:created', function (e) {
 			var type = e.layerType,
 				  layer = e.layer;
+			// drawnItems.addLayer(layer);
 
-			drawnItems.addLayer(layer);
+      //turf intersection logic, break out to own module?
+      //find the country that is being intersected (what about multiple?)
+      var intersectingFeature = geojson.features.filter(function(feature) {
+        return Turf.intersect(feature, layer.toGeoJSON());
+      });
+
+      //probably should go into drawnItems featureGroup, not replace uploaded geojson?
+      //or at least have some way of signifying the difference, ready for re-download.
+      map.featureLayer.setGeoJSON(Turf.intersect(intersectingFeature[0], layer.toGeoJSON()));
+
 		});
-
-    var data = Shp("shapefiles/ne_110m_admin_0_countries/ne_110m_admin_0_countries").then(function(geojson){
-        map.featureLayer.setGeoJSON(geojson);
-    });
 
     // if (this.props.geojson) {
     //   map.featureLayer.setGeoJSON(this.props.geojson);
