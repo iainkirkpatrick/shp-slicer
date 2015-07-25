@@ -32,10 +32,33 @@ var Map = React.createClass({
       .setView(this.props.view.latlon, this.props.view.zoom);
 
     var geojson;
-    Shp("shapefiles/ne_110m_admin_0_countries/ne_110m_admin_0_countries").then(function(data){
-        map.featureLayer.setGeoJSON(data);
-        geojson = data;
-    });
+
+    //shp upload logic
+    var dropZone = document.getElementById('map');
+    dropZone.addEventListener('dragover', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+    }, false);
+    dropZone.addEventListener('drop', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      var files = e.dataTransfer.files;
+
+      var reader = new FileReader();
+      reader.onloadend = function(ev) {
+        if (ev.target.readyState == FileReader.DONE) {
+          console.log("shp uploaded, parsing");
+          var shapefile = ev.target.result;
+          Shp(shapefile).then(function(data){
+              map.featureLayer.setGeoJSON(data);
+              geojson = data;
+          });
+        }
+      };
+      reader.readAsArrayBuffer(files[0]);
+
+    }, false);
 
     var drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
@@ -69,10 +92,6 @@ var Map = React.createClass({
           ]
       });
 		});
-
-    // if (this.props.geojson) {
-    //   map.featureLayer.setGeoJSON(this.props.geojson);
-    // };
   },
   render: function() {
     return (
