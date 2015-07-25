@@ -1,6 +1,7 @@
 var React = require('react');
 var Shp = require('shpjs');
 var Turf = require('turf');
+var Shpwrite = require('shp-write');
 require('mapbox.js'); // <-- auto-attaches to window.L
 require('leaflet-draw');
 
@@ -59,8 +60,14 @@ var Map = React.createClass({
 
       //probably should go into drawnItems featureGroup, not replace uploaded geojson?
       //or at least have some way of signifying the difference, ready for re-download.
-      map.featureLayer.setGeoJSON(Turf.intersect(intersectingFeature[0], layer.toGeoJSON()));
-
+      var clip = Turf.intersect(intersectingFeature[0], layer.toGeoJSON());
+      map.featureLayer.setGeoJSON(clip);
+      Shpwrite.download({
+        type: 'FeatureCollection',
+          features: [
+            clip
+          ]
+      });
 		});
 
     // if (this.props.geojson) {
