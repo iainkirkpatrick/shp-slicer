@@ -39,8 +39,10 @@ var Map = React.createClass({
     var drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
     var drawControl = new L.Control.Draw({
-      edit: {
-        featureGroup: drawnItems
+      draw: {
+        polyline: false,
+        circle: false,
+        marker: false
       }
     });
     map.addControl(drawControl);
