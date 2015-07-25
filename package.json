@@ -4,7 +4,8 @@
   "author": "iainkirkpatrick",
   "main": "index.js",
   "scripts": {
-    "dev": "budo index.js:bundle.js --live --verbose --debug"
+    "dev": "budo index.js:bundle.js --live --verbose --debug",
+    "prod": "browserify index.js -o bundle.js"
   },
   "browserify": {
     "transform": [
