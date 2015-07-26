@@ -98,26 +98,28 @@ var Map = React.createClass({
           return Turf.intersect(feature, layer.toGeoJSON());
         });
 
-        //probably should go into drawnItems featureGroup, not replace uploaded geojson?
-        //or at least have some way of signifying the difference, ready for re-download.
-        var clip = Turf.intersect(intersectingFeature[0], layer.toGeoJSON());
-        map.featureLayer.setGeoJSON(clip);
+        if (intersectingFeature.length > 0) {
+          //probably should go into drawnItems featureGroup, not replace uploaded geojson?
+          //or at least have some way of signifying the difference, ready for re-download.
+          var clip = Turf.intersect(intersectingFeature[0], layer.toGeoJSON());
+          map.featureLayer.setGeoJSON(clip);
 
-        VexDialog.confirm({
-          message: 'Confirm the clip?',
-          callback: function(value) {
-            if (value) {
-              Shpwrite.download({
-                type: 'FeatureCollection',
-                  features: [
-                    clip
-                  ]
-              });
-            } else {
-              map.featureLayer.setGeoJSON(geojson);
+          VexDialog.confirm({
+            message: 'Confirm the clip?',
+            callback: function(value) {
+              if (value) {
+                Shpwrite.download({
+                  type: 'FeatureCollection',
+                    features: [
+                      clip
+                    ]
+                });
+              } else {
+                map.featureLayer.setGeoJSON(geojson);
+              }
             }
-          }
-        });
+          });
+        }
       };
 		});
   },
