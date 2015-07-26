@@ -8,4 +8,8 @@ instructions:
 - once you confirm the boundaries, the clipped area will download to your default downloads location
 - voila!
 
-i made this quickly and dirtily in a weekend, still improvements to be made (with UX esp).
+i made this quickly and dirtily in a weekend, still improvements to be made (with UX esp):
+- some kind of instructions, maybe a modal
+- draw tools don't error if no shapefile uploaded
+- naming of the clip download with same names of upload
+- general UX flow-type bugs like uploading a second shp, confirming clip on drawing etc
