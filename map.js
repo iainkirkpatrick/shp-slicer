@@ -1,7 +1,10 @@
 var React = require('react');
 var Shp = require('shpjs');
 var Turf = require('turf');
-var Shpwrite = require('shp-write');
+
+//shp-write not yet updated to latest version on NPM, latest ver has file naming
+// var Shpwrite = require('shp-write');
+var Shpwrite = require('./shp-write-master/shpwrite.js');
 require('mapbox.js'); // <-- auto-attaches to window.L
 require('leaflet-draw');
 
@@ -31,7 +34,7 @@ var Map = React.createClass({
     var map = L.mapbox.map('map', 'envintage.i9eofp14')
       .setView(this.props.view.latlon, this.props.view.zoom);
 
-    var geojson;
+    var geojson, shapefileName;
 
     //shp upload logic
     var dropZone = document.getElementById('map');
@@ -47,7 +50,7 @@ var Map = React.createClass({
       map.featureLayer.clearLayers();
 
       var files = e.dataTransfer.files;
-      console.log(files[0].name);
+      shapefileName = files[0].name;
 
       var reader = new FileReader();
       reader.onloadend = function(ev) {
@@ -56,7 +59,6 @@ var Map = React.createClass({
           Shp(shapefile).then(function(data){
               map.featureLayer.setGeoJSON(data);
               geojson = data;
-              console.log(data)
           });
         }
       };
@@ -102,12 +104,19 @@ var Map = React.createClass({
         //or at least have some way of signifying the difference, ready for re-download.
         var clip = Turf.intersect(intersectingFeature[0], layer.toGeoJSON());
         map.featureLayer.setGeoJSON(clip);
+        console.log(shapefileName);
+        var options = {
+          folder: shapefileName,
+          types: {
+              polygon: shapefileName
+          }
+        };
         Shpwrite.download({
           type: 'FeatureCollection',
             features: [
               clip
             ]
-        });
+        }, options);
       };
 		});
   },
