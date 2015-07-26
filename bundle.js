@@ -25,7 +25,7 @@ React.render(React.createElement(Map, null), document.body);
 //vex stuff
 Vex.defaultOptions.className = 'vex-theme-wireframe';
 Vex.open({
-  content: '<div><h2>shp-slicer</h2></div>' + '<div><p>1. drag and drop a ZIPPED shapefile onto the map window.</p></div>' + '<div><p>2. once the shp has loaded, use the polygon / rectangle tool in the top right to draw the area you wish to clip out of the shapefile.</p></div>' + '<div><p>3. confirm the boundaries, and the shapefile will download to your default local downloads location.</p></div>' + '<div><p>4. any comments / feedback, log an issue at https://github.com/iainkirkpatrick/shp-slicer/issues/ or hit me at kirkpatrick.iain@gmail.com.</p></div>' + '<div><p>ps. much love to <a href="http://facebook.github.io/react/">React</a> and <a href="http://mapbox.com">Mapbox</a> for the main tools used.</p></div>',
+  content: '<div><h2>shp-slicer</h2></div>' + '<div><p>1. drag and drop a ZIPPED shapefile onto the map window (NOTE: loading the shp may take a while - be patient!).</p></div>' + '<div><p>2. once the shp has loaded, use the polygon / rectangle tool in the top right to draw the area you wish to clip out of the shapefile.</p></div>' + '<div><p>3. confirm the boundaries, and the shapefile will download to your default local downloads location.</p></div>' + '<div><p>4. any comments / feedback, log an issue at https://github.com/iainkirkpatrick/shp-slicer/issues/ or hit me at kirkpatrick.iain@gmail.com.</p></div>' + '<div><p>ps. much love to <a href="http://facebook.github.io/react/">React</a> and <a href="http://mapbox.com">Mapbox</a> for the main tools used.</p></div>',
   afterOpen: function afterOpen($vexContent) {},
   afterClose: function afterClose() {
     //ideally don't allow drag-and-drop of shp's until here
@@ -36,6 +36,7 @@ Vex.open({
 'use strict';
 
 var React = require('react');
+var VexDialog = require('vex-js/js/vex.dialog.js');
 var Shp = require('shpjs');
 var Turf = require('turf');
 var Shpwrite = require('shp-write');
@@ -91,9 +92,8 @@ var Map = React.createClass({
         if (ev.target.readyState == FileReader.DONE) {
           var shapefile = ev.target.result;
           Shp(shapefile).then(function (data) {
-            map.featureLayer.setGeoJSON(data);
             geojson = data;
-            console.log(data);
+            map.featureLayer.setGeoJSON(geojson);
           });
         }
       };
@@ -134,14 +134,26 @@ var Map = React.createClass({
           return Turf.intersect(feature, layer.toGeoJSON());
         });
 
-        //probably should go into drawnItems featureGroup, not replace uploaded geojson?
-        //or at least have some way of signifying the difference, ready for re-download.
-        var clip = Turf.intersect(intersectingFeature[0], layer.toGeoJSON());
-        map.featureLayer.setGeoJSON(clip);
-        Shpwrite.download({
-          type: 'FeatureCollection',
-          features: [clip]
-        });
+        if (intersectingFeature.length > 0) {
+          //probably should go into drawnItems featureGroup, not replace uploaded geojson?
+          //or at least have some way of signifying the difference, ready for re-download.
+          var clip = Turf.intersect(intersectingFeature[0], layer.toGeoJSON());
+          map.featureLayer.setGeoJSON(clip);
+
+          VexDialog.confirm({
+            message: 'Confirm the clip?',
+            callback: function callback(value) {
+              if (value) {
+                Shpwrite.download({
+                  type: 'FeatureCollection',
+                  features: [clip]
+                });
+              } else {
+                map.featureLayer.setGeoJSON(geojson);
+              }
+            }
+          });
+        }
       };
     });
   },
@@ -152,7 +164,7 @@ var Map = React.createClass({
 
 module.exports = Map;
 
-},{"leaflet-draw":14,"mapbox.js":30,"react":199,"shp-write":200,"shpjs":256,"turf":387}],3:[function(require,module,exports){
+},{"leaflet-draw":14,"mapbox.js":30,"react":199,"shp-write":200,"shpjs":256,"turf":387,"vex-js/js/vex.dialog.js":510}],3:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
