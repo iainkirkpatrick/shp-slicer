@@ -43,27 +43,44 @@ var Map = React.createClass({
     dropZone.addEventListener('drop', function(e) {
       e.stopPropagation();
       e.preventDefault();
+
+      map.featureLayer.clearLayers();
+
       var files = e.dataTransfer.files;
+      console.log(files[0].name);
 
       var reader = new FileReader();
       reader.onloadend = function(ev) {
         if (ev.target.readyState == FileReader.DONE) {
-          console.log("shp uploaded, parsing");
           var shapefile = ev.target.result;
           Shp(shapefile).then(function(data){
               map.featureLayer.setGeoJSON(data);
               geojson = data;
+              console.log(data)
           });
         }
       };
+      // reader.onload = (function(file) {
+      //   return function(ev) {
+      //     var shapefile = ev.target.result;
+      //     Shp(shapefile).then(function(data){
+      //       map.featureLayer.setGeoJSON(data);
+      //       geojson = data;
+      //     });
+      //   }
+      // })(files[0]);
       reader.readAsArrayBuffer(files[0]);
 
     }, false);
 
+    //draw controls / logic
     var drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
     var drawControl = new L.Control.Draw({
       draw: {
+        polygon: {
+          allowIntersection: false
+        },
         polyline: false,
         circle: false,
         marker: false
@@ -73,24 +90,25 @@ var Map = React.createClass({
     map.on('draw:created', function (e) {
 			var type = e.layerType,
 				  layer = e.layer;
-			// drawnItems.addLayer(layer);
 
-      //turf intersection logic, break out to own module?
-      //find the country that is being intersected (what about multiple?)
-      var intersectingFeature = geojson.features.filter(function(feature) {
-        return Turf.intersect(feature, layer.toGeoJSON());
-      });
+      if (geojson) {
+        //turf intersection logic, break out to own module?
+        //find the country that is being intersected (what about multiple?)
+        var intersectingFeature = geojson.features.filter(function(feature) {
+          return Turf.intersect(feature, layer.toGeoJSON());
+        });
 
-      //probably should go into drawnItems featureGroup, not replace uploaded geojson?
-      //or at least have some way of signifying the difference, ready for re-download.
-      var clip = Turf.intersect(intersectingFeature[0], layer.toGeoJSON());
-      map.featureLayer.setGeoJSON(clip);
-      Shpwrite.download({
-        type: 'FeatureCollection',
-          features: [
-            clip
-          ]
-      });
+        //probably should go into drawnItems featureGroup, not replace uploaded geojson?
+        //or at least have some way of signifying the difference, ready for re-download.
+        var clip = Turf.intersect(intersectingFeature[0], layer.toGeoJSON());
+        map.featureLayer.setGeoJSON(clip);
+        Shpwrite.download({
+          type: 'FeatureCollection',
+            features: [
+              clip
+            ]
+        });
+      };
 		});
   },
   render: function() {
