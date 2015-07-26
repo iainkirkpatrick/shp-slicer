@@ -43,19 +43,32 @@ var Map = React.createClass({
     dropZone.addEventListener('drop', function(e) {
       e.stopPropagation();
       e.preventDefault();
+
+      map.featureLayer.clearLayers();
+
       var files = e.dataTransfer.files;
+      console.log(files[0].name);
 
       var reader = new FileReader();
       reader.onloadend = function(ev) {
         if (ev.target.readyState == FileReader.DONE) {
-          console.log("shp uploaded, parsing");
           var shapefile = ev.target.result;
           Shp(shapefile).then(function(data){
               map.featureLayer.setGeoJSON(data);
               geojson = data;
+              console.log(data)
           });
         }
       };
+      // reader.onload = (function(file) {
+      //   return function(ev) {
+      //     var shapefile = ev.target.result;
+      //     Shp(shapefile).then(function(data){
+      //       map.featureLayer.setGeoJSON(data);
+      //       geojson = data;
+      //     });
+      //   }
+      // })(files[0]);
       reader.readAsArrayBuffer(files[0]);
 
     }, false);

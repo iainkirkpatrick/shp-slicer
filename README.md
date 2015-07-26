@@ -13,3 +13,4 @@ i made this quickly and dirtily in a weekend, still improvements to be made (wit
 - draw tools don't error if no shapefile uploaded
 - naming of the clip download with same names of upload
 - general UX flow-type bugs like uploading a second shp, confirming clip on drawing etc
+- most of the core logic is in the componentDidMount function, ideally break it out (because ideally the map component could be reused for other projects)
