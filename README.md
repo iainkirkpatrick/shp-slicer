@@ -1,4 +1,6 @@
-*shp-slicer*
+#shp-slicer
+
+[iainkirkpatrick.me/shp-slicer](http://iainkirkpatrick.me/shp-slicer)
 
 a web-app for clipping your shapefiles if you don't have (or don't want to boot up) your shiny GIS systems
 
