@@ -22,6 +22,7 @@
   "homepage": "https://github.com/iainkirkpatrick/shp-slicer",
   "dependencies": {
     "express": "*",
+    "jquery": "^2.1.4",
     "leaflet-draw": "^0.2.3",
     "mapbox.js": "^2.2.1",
     "react": "^0.13.3",
@@ -29,7 +30,8 @@
     "rx": "^2.5.3",
     "shp-write": "^0.2.1",
     "shpjs": "^3.1.6",
-    "turf": "^2.0.2"
+    "turf": "^2.0.2",
+    "vex-js": "^2.3.2"
   },
   "devDependencies": {
     "babelify": "^6.1.3",

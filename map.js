@@ -60,10 +60,14 @@ var Map = React.createClass({
 
     }, false);
 
+    //draw controls / logic
     var drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
     var drawControl = new L.Control.Draw({
       draw: {
+        polygon: {
+          allowIntersection: false
+        },
         polyline: false,
         circle: false,
         marker: false
@@ -73,24 +77,25 @@ var Map = React.createClass({
     map.on('draw:created', function (e) {
 			var type = e.layerType,
 				  layer = e.layer;
-			// drawnItems.addLayer(layer);
 
-      //turf intersection logic, break out to own module?
-      //find the country that is being intersected (what about multiple?)
-      var intersectingFeature = geojson.features.filter(function(feature) {
-        return Turf.intersect(feature, layer.toGeoJSON());
-      });
+      if (geojson) {
+        //turf intersection logic, break out to own module?
+        //find the country that is being intersected (what about multiple?)
+        var intersectingFeature = geojson.features.filter(function(feature) {
+          return Turf.intersect(feature, layer.toGeoJSON());
+        });
 
-      //probably should go into drawnItems featureGroup, not replace uploaded geojson?
-      //or at least have some way of signifying the difference, ready for re-download.
-      var clip = Turf.intersect(intersectingFeature[0], layer.toGeoJSON());
-      map.featureLayer.setGeoJSON(clip);
-      Shpwrite.download({
-        type: 'FeatureCollection',
-          features: [
-            clip
-          ]
-      });
+        //probably should go into drawnItems featureGroup, not replace uploaded geojson?
+        //or at least have some way of signifying the difference, ready for re-download.
+        var clip = Turf.intersect(intersectingFeature[0], layer.toGeoJSON());
+        map.featureLayer.setGeoJSON(clip);
+        Shpwrite.download({
+          type: 'FeatureCollection',
+            features: [
+              clip
+            ]
+        });
+      };
 		});
   },
   render: function() {
