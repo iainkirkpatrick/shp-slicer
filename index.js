@@ -23,7 +23,7 @@ React.render(<Map />, document.body)
 Vex.defaultOptions.className = 'vex-theme-wireframe';
 Vex.open({
   content: '<div><h2>shp-slicer</h2></div>' +
-           '<div><p>1. drag and drop a ZIPPED shapefile onto the map window.</p></div>' +
+           '<div><p>1. drag and drop a ZIPPED shapefile onto the map window (NOTE: loading the shp may take a while - be patient!).</p></div>' +
            '<div><p>2. once the shp has loaded, use the polygon / rectangle tool in the top right to draw the area you wish to clip out of the shapefile.</p></div>' +
            '<div><p>3. confirm the boundaries, and the shapefile will download to your default local downloads location.</p></div>' +
            '<div><p>4. any comments / feedback, log an issue at https://github.com/iainkirkpatrick/shp-slicer/issues/ or hit me at kirkpatrick.iain@gmail.com.</p></div>' +
