@@ -1,4 +1,5 @@
 var React = require('react');
+var VexDialog = require('vex-js/js/vex.dialog.js');
 var Shp = require('shpjs');
 var Turf = require('turf');
 var Shpwrite = require('shp-write');
@@ -54,9 +55,8 @@ var Map = React.createClass({
         if (ev.target.readyState == FileReader.DONE) {
           var shapefile = ev.target.result;
           Shp(shapefile).then(function(data){
-              map.featureLayer.setGeoJSON(data);
-              geojson = data;
-              console.log(data)
+            geojson = data;
+            map.featureLayer.setGeoJSON(geojson);
           });
         }
       };
@@ -102,11 +102,21 @@ var Map = React.createClass({
         //or at least have some way of signifying the difference, ready for re-download.
         var clip = Turf.intersect(intersectingFeature[0], layer.toGeoJSON());
         map.featureLayer.setGeoJSON(clip);
-        Shpwrite.download({
-          type: 'FeatureCollection',
-            features: [
-              clip
-            ]
+
+        VexDialog.confirm({
+          message: 'Confirm the clip?',
+          callback: function(value) {
+            if (value) {
+              Shpwrite.download({
+                type: 'FeatureCollection',
+                  features: [
+                    clip
+                  ]
+              });
+            } else {
+              map.featureLayer.setGeoJSON(geojson);
+            }
+          }
         });
       };
 		});
